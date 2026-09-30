@@ -1,0 +1,96 @@
+import "./style.css";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { redirect } from "@elements/app";
+import { signin } from "#app/shared/services/auth";
+import { Mark } from "#app/shared/templates/site";
+
+interface SigninForm {
+  email: string;
+  password: string;
+  error: string;
+}
+
+interface DemoLogin {
+  email: string;
+  password: string;
+}
+
+function onSubmit(form: SigninForm) {
+  try {
+    signin(form.email, form.password);
+    form.error = "";
+    redirect("/admin");
+  } catch (err: any) {
+    form.error = err.message;
+  }
+}
+
+function useDemo(form: SigninForm, demo: DemoLogin) {
+  form.email = demo.email;
+  form.password = demo.password;
+}
+
+<html lang="en" class="page-signin" (
+  demo: DemoLogin | null,
+  private form: SigninForm = { email: "", password: "", error: "" },
+)>
+  <head>
+    <title>Sign in: Launchkiln admin</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <main class="signin">
+      <div class="signin-box stack is-lg">
+        <a class="site-brand row" href="/"><Mark /> Launchkiln</a>
+
+        <div class="card">
+          <div class="card-body">
+            <form class="stack" onsubmit={() => onSubmit(form)}>
+              <h1>Sign in to the admin</h1>
+
+              <p e:if={form.error} class="error" role="alert">{form.error}</p>
+
+              <div class="field">
+                <label for="email">Email</label>
+                <input id="email"
+                       name="email"
+                       type="email"
+                       value={form.email}
+                       autocomplete="email"
+                       autocapitalize="none"
+                       spellcheck={false}
+                       required>
+              </div>
+
+              <div class="field">
+                <label for="password">Password</label>
+                <input id="password"
+                       name="password"
+                       type="password"
+                       value={form.password}
+                       autocomplete="current-password"
+                       required>
+              </div>
+
+              <button type="submit" class="is-primary is-block">Sign in</button>
+            </form>
+          </div>
+        </div>
+
+        <div e:if={demo} class="callout is-info signin-demo">
+          <p class="callout-title">Demo admin login</p>
+          <dl>
+            <dt>Email</dt>
+            <dd><code>{demo!.email}</code></dd>
+            <dt>Password</dt>
+            <dd><code>{demo!.password}</code></dd>
+          </dl>
+          <p><button type="button" class="is-sm" onclick={() => useDemo(form, demo!)}>Fill in the demo login</button></p>
+        </div>
+
+        <a class="link-muted" href="/">Back to the site</a>
+      </div>
+    </main>
+  </body>
+</html>

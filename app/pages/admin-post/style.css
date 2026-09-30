@@ -1,0 +1,78 @@
+@import "#app/shared/styles/page.css";
+
+.pe {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 20rem;
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.pe-side {
+  position: sticky;
+  top: var(--space-6);
+}
+
+.pe textarea.pe-body {
+  min-height: 28rem;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  line-height: var(--leading-relaxed);
+}
+
+.pe-preview {
+  min-height: 28rem;
+  padding: var(--space-4) var(--space-2);
+}
+
+.pe-cover {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+}
+
+.pe-cover-empty {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--radius-md);
+  color: var(--ink-dim);
+  font-size: var(--text-sm);
+}
+
+.pe-status label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+}
+
+.pe-side .card-foot {
+  justify-content: space-between;
+}
+
+.pe-slug {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.pe-slug span {
+  color: var(--ink-dim);
+  font-size: var(--text-sm);
+}
+
+@media (max-width: 64rem) {
+  .pe {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pe-side {
+    position: static;
+  }
+}

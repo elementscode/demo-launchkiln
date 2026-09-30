@@ -1,0 +1,53 @@
+import "./style.css";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { raw } from "@elements/app";
+import { Site } from "#app/shared/templates/site";
+import { coverUrl } from "#app/shared/services/media";
+import { Post, readingMinutes } from "#app/shared/services/posts";
+import { PostCard, postDate } from "#app/shared/templates/post-card";
+
+<html lang="en" class="page-blog-post" (post: Post, html: string, more: Post[])>
+  <head>
+    <title>{post.title}: Launchkiln</title>
+    <meta name="description" content={post.excerpt}>
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <Site current="/blog">
+      <main class="post">
+        <article>
+          <header class="post-head page-shell is-prose stack">
+            <a class="link-muted blog-meta" href="/blog">Blog</a>
+            <h1>{post.title}</h1>
+            <p class="lede">{post.excerpt}</p>
+            <span class="blog-meta cluster is-sm">
+              <time datetime={post.publishedAt?.toISOString()}>{postDate(post)}</time>
+              <span>{readingMinutes(post.body)} min read</span>
+            </span>
+          </header>
+
+          <div e:if={post.coverId} class="post-cover">
+            <img class="blog-cover" src={coverUrl(post.coverId, post.coverHash)} alt="" width="1600" height="900">
+          </div>
+
+          <div class="page-shell is-prose">
+            <div class="prose post-body">{raw(html)}</div>
+
+            <aside class="post-cta stack">
+              <h2>Launchkiln opens early next year</h2>
+              <p>Join the waitlist for an early invite and 30% off your first year.</p>
+              <div><a class="button is-primary" href="/#join">Join the waitlist</a></div>
+            </aside>
+          </div>
+        </article>
+
+        <section e:if={more.length > 0} class="post-more page-shell">
+          <h2>More from the blog</h2>
+          <div class="blog-grid">
+            <PostCard e:for={p of more} post={p} />
+          </div>
+        </section>
+      </main>
+    </Site>
+  </body>
+</html>

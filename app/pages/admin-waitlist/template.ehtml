@@ -1,0 +1,155 @@
+import "./style.css";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { LiveView } from "@elements/app";
+import { AdminShell } from "#app/shared/templates/admin-shell";
+import { Signup } from "#app/shared/services/waitlist";
+
+type SortKey = string;
+
+interface Filters {
+  query: string;
+  sort: SortKey;
+}
+
+interface Stats {
+  total: number;
+  referred: number;
+  today: number;
+  top: Signup | undefined;
+}
+
+function stats(rows: LiveView<Signup>): Stats {
+  let dayAgo = Date.now() - 86400e3;
+  let top: Signup | undefined;
+  let referred = 0;
+  let today = 0;
+
+  for (let r of rows) {
+    if (r.referredBy) {
+      referred++;
+    }
+
+    if (+r.createdAt > dayAgo) {
+      today++;
+    }
+
+    if (!top || r.referrals > top.referrals) {
+      top = r;
+    }
+  }
+
+  return { total: rows.length, referred, today, top };
+}
+
+function emails(rows: LiveView<Signup>): Map<string, string> {
+  let byId = new Map<string, string>();
+
+  for (let r of rows) {
+    byId.set(r.id, r.email);
+  }
+
+  return byId;
+}
+
+function visible(rows: LiveView<Signup>, filters: Filters): Signup[] {
+  let q = filters.query.trim().toLowerCase();
+  let matched = q ? rows.filter((r) => r.email.includes(q) || r.code.includes(q)) : rows.filter(() => true);
+
+  switch (filters.sort) {
+    case "newest":
+      return matched.sort((a, b) => +b.createdAt - +a.createdAt);
+
+    case "referrals":
+      return matched.sort((a, b) => b.referrals - a.referrals || (a.position ?? 0) - (b.position ?? 0));
+
+    default:
+      return matched.sort((a, b) => (a.position ?? Infinity) - (b.position ?? Infinity));
+  }
+}
+
+function percent(n: number, of: number): string {
+  return of === 0 ? "0%" : `${Math.round((n / of) * 100)}%`;
+}
+
+function joined(d: Date): string {
+  return d.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+}
+
+<html lang="en" class="page-admin-waitlist" (
+  signups: LiveView<Signup>,
+  private filters: Filters = { query: "", sort: "position" },
+)>
+  <head>
+    <title>Waitlist: Launchkiln admin</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <AdminShell current="/admin/waitlist" title="Waitlist">
+      <a slot="actions" class="button" href="/admin/waitlist/export" download>Export CSV</a>
+
+      <div class="stack is-lg">
+        <div class="aw-stats">
+          <div class="card aw-stat"><div class="card-body stack is-xs">
+            <p class="hint">Signups</p>
+            <p class="aw-stat-value">{stats(signups).total.toLocaleString("en-US")}</p>
+          </div></div>
+          <div class="card aw-stat"><div class="card-body stack is-xs">
+            <p class="hint">Joined through a referral</p>
+            <p class="aw-stat-value">{percent(stats(signups).referred, stats(signups).total)}</p>
+          </div></div>
+          <div class="card aw-stat"><div class="card-body stack is-xs">
+            <p class="hint">Joined in the last 24 hours</p>
+            <p class="aw-stat-value">{stats(signups).today}</p>
+          </div></div>
+          <div class="card aw-stat"><div class="card-body stack is-xs">
+            <p class="hint">Top referrer</p>
+            <p class="aw-stat-value">{stats(signups).top?.referrals ?? 0}</p>
+            <p class="hint truncate">{stats(signups).top?.email ?? "No one yet"}</p>
+          </div></div>
+        </div>
+
+        <div class="card">
+          <div class="card-head aw-toolbar row">
+            <label class="sr-only" for="aw-search">Search signups</label>
+            <input id="aw-search" type="search" class="is-sm" placeholder="Search by email or code" value={filters.query}>
+            <div class="row gap-2">
+              <label for="aw-sort" class="hint">Sort by</label>
+              <select id="aw-sort" class="is-sm" value={filters.sort}>
+                <option value="position">Place in line</option>
+                <option value="newest">Newest</option>
+                <option value="referrals">Most referrals</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="aw-table-wrap">
+            <table class="aw-table">
+              <thead>
+                <tr>
+                  <th class="num">Place</th>
+                  <th>Email</th>
+                  <th class="num">Referrals</th>
+                  <th>Referred by</th>
+                  <th>Joined</th>
+                  <th>Status page</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr e:for={s of visible(signups, filters)} oninsert={(e) => e.target.classList.add("aw-new")}>
+                  <td class="num">{s.position ?? ""}</td>
+                  <td>{s.email}</td>
+                  <td class="num">{s.referrals}</td>
+                  <td>{s.referredBy ? emails(signups).get(s.referredBy) ?? "" : ""}</td>
+                  <td>{joined(s.createdAt)}</td>
+                  <td><a class="link-action" href={`/waitlist/${s.code}`} target="_blank">{s.code}</a></td>
+                </tr>
+              </tbody>
+            </table>
+            <p e:if={visible(signups, filters).length === 0} class="aw-empty">No signups match “{filters.query}”.</p>
+          </div>
+        </div>
+      </div>
+    </AdminShell>
+  </body>
+</html>

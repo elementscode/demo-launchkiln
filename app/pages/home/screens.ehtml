@@ -1,0 +1,259 @@
+import "./screens.css";
+
+interface Line {
+  id: string;
+  item: string;
+  qty: string;
+  amount: string;
+}
+
+const LINES: Line[] = [
+  { id: "l1", item: "Brand identity, logo suite", qty: "1", amount: "$1,800.00" },
+  { id: "l2", item: "Website design, 5 pages", qty: "1", amount: "$2,400.00" },
+  { id: "l3", item: "Revision rounds", qty: "6 h", amount: "$570.00" },
+];
+
+interface DraftLine {
+  id: string;
+  item: string;
+  qty: string;
+  rate: string;
+  amount: string;
+}
+
+const DRAFT_LINES: DraftLine[] = [
+  { id: "d1", item: "Monthly design retainer", qty: "1", rate: "$2,400", amount: "$2,400.00" },
+  { id: "d2", item: "Social templates, set of 12", qty: "1", rate: "$600", amount: "$600.00" },
+  { id: "d3", item: "Extra revisions", qty: "2 h", rate: "$95", amount: "$190.00" },
+];
+
+interface Reminder {
+  id: string;
+  when: string;
+  title: string;
+  detail: string;
+  sent: boolean;
+}
+
+const REMINDERS: Reminder[] = [
+  { id: "r1", when: "Oct 11", title: "Friendly heads-up", detail: "3 days before the due date", sent: true },
+  { id: "r2", when: "Oct 14", title: "Due today", detail: "On the due date, with the pay link first", sent: true },
+  { id: "r3", when: "Oct 21", title: "Past due", detail: "7 days after, with your late fee", sent: false },
+];
+
+interface Payment {
+  id: string;
+  client: string;
+  number: string;
+  amount: string;
+  status: "paid" | "due" | "late";
+  label: string;
+}
+
+const PAYMENTS: Payment[] = [
+  { id: "p1", client: "Northfield Studio", number: "#1042", amount: "$5,151.60", status: "paid", label: "Paid today" },
+  { id: "p2", client: "Harbor & Pine", number: "#1041", amount: "$2,200.00", status: "due", label: "Due in 4 days" },
+  { id: "p3", client: "Juniper Health", number: "#1039", amount: "$8,640.00", status: "paid", label: "Paid Oct 2" },
+  { id: "p4", client: "Oakline Coffee", number: "#1037", amount: "$1,280.00", status: "late", label: "3 days late" },
+  { id: "p5", client: "Studio Marlo", number: "#1036", amount: "$960.00", status: "paid", label: "Paid Sep 29" },
+];
+
+<Chrome (title: string)>
+  <div class="shot-chrome" aria-hidden="true">
+    <i></i><i></i><i></i>
+    <span>{title}</span>
+  </div>
+</Chrome>
+
+<InvoiceDoc (stamped: boolean = false)>
+  <div class="invoice-doc">
+    <div class="shot-body">
+      <div class="invoice-head">
+        <div class="invoice-from">
+          <span class="invoice-logo">M</span>
+          <div>
+            <p>Mara Lindqvist Design</p>
+            <p class="dim">mara@lindqvist.test</p>
+          </div>
+        </div>
+
+        <div class="invoice-number">
+          <h3>Invoice #1042</h3>
+          <span class="hero-badge" e:if={stamped}>
+            <span class="shot-status is-late">Overdue 3 days</span>
+            <span class="shot-status is-paid">Paid</span>
+          </span>
+          <span class="shot-status is-due" e:else>Due Oct 14</span>
+        </div>
+      </div>
+
+      <div class="invoice-meta">
+        <div>
+          <p>Billed to</p>
+          <p>Northfield Studio</p>
+        </div>
+        <div>
+          <p>Issued</p>
+          <p>Sep 30, 2026</p>
+        </div>
+        <div>
+          <p>Due</p>
+          <p>Oct 14, 2026</p>
+        </div>
+      </div>
+
+      <table class="invoice-lines">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th class="num">Qty</th>
+            <th class="num">Amount</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr e:for={line of LINES}>
+            <td>{line.item}</td>
+            <td class="num">{line.qty}</td>
+            <td class="num">{line.amount}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="invoice-totals">
+        <span class="dim">Subtotal</span>
+        <span class="num">$4,770.00</span>
+        <span class="dim">Tax 8%</span>
+        <span class="num">$381.60</span>
+        <span class="grand">Total</span>
+        <span class="grand num">$5,151.60</span>
+      </div>
+
+      <div class="invoice-pay">
+        <span class="dim">Card, Apple Pay, or bank transfer</span>
+        <b>Pay $5,151.60</b>
+      </div>
+    </div>
+
+    <div class="hero-stamp" e:if={stamped} aria-hidden="true">PAID</div>
+  </div>
+</InvoiceDoc>
+
+<HeroInvoice>
+  <div class="hero-art">
+    <div class="shot hero-invoice" role="img" aria-label="Invoice #1042 for $5,151.60, stamped paid">
+      <InvoiceDoc stamped={true} />
+    </div>
+    <div class="hero-toast" aria-hidden="true">
+      <span class="hero-toast-icon">
+        <svg width="14" height="14" viewBox="0 0 16 16"><path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span><b>Northfield Studio paid $5,151.60</b><small>Matched to invoice #1042 &middot; just now</small></span>
+    </div>
+  </div>
+</HeroInvoice>
+
+<InvoiceShot>
+  <div class="shot" role="img" aria-label="A new invoice being written for Harbor and Pine: three line items, a monthly repeat, and a send button">
+    <Chrome title="Invoices / New invoice" />
+    <div class="shot-body editor">
+      <div class="editor-fields">
+        <div class="editor-field is-wide">
+          <p>Client</p>
+          <div class="editor-input">
+            <span class="editor-avatar">HP</span>
+            <span>Harbor &amp; Pine</span>
+            <span class="dim editor-chev">dana@harborpine.test</span>
+          </div>
+        </div>
+        <div class="editor-field">
+          <p>Invoice</p>
+          <div class="editor-input">#1043</div>
+        </div>
+        <div class="editor-field">
+          <p>Due</p>
+          <div class="editor-input">Net 14 <span class="dim">&middot; Oct 28</span></div>
+        </div>
+      </div>
+
+      <div class="editor-lines">
+        <div class="editor-line is-head">
+          <span>Item</span>
+          <span class="num">Qty</span>
+          <span class="num">Rate</span>
+          <span class="num">Amount</span>
+        </div>
+        <div e:for={line of DRAFT_LINES} class="editor-line">
+          <span class="editor-cell">{line.item}</span>
+          <span class="editor-cell num">{line.qty}</span>
+          <span class="editor-cell num">{line.rate}</span>
+          <span class="num">{line.amount}</span>
+        </div>
+        <div class="editor-add">
+          <span class="editor-cell is-typing">Photo<i></i></span>
+          <div class="editor-suggest">
+            <p class="dim">Saved items</p>
+            <p><span>Photography, half day</span><span class="dim">$850</span></p>
+            <p><span>Photo retouching</span><span class="dim">$65 / h</span></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="editor-foot">
+        <span class="editor-toggle"><i></i> Repeats monthly</span>
+        <span class="editor-total"><span class="dim">Total</span> $3,190.00</span>
+        <b>Send invoice</b>
+      </div>
+    </div>
+  </div>
+</InvoiceShot>
+
+<RemindersShot>
+  <div class="shot" role="img" aria-label="A reminder schedule: two reminders sent, one scheduled">
+    <Chrome title="Invoice #1041 / Reminders" />
+    <div class="shot-body">
+      <div class="reminder-rail">
+        <div e:for={r of REMINDERS} class={["reminder", r.sent && "is-sent"]}>
+          <h4>{r.when}: {r.title}</h4>
+          <span class={["shot-status", r.sent ? "is-paid" : "is-draft"]}>{r.sent ? "Sent" : "Scheduled"}</span>
+          <p class="dim">{r.detail}</p>
+        </div>
+      </div>
+
+      <div class="reminder-preview">
+        <p>Hi Dana, invoice #1041 for $2,200.00 is due today. You can pay it in one click here.</p>
+        <p class="dim">Thanks, Mara</p>
+      </div>
+    </div>
+  </div>
+</RemindersShot>
+
+<PaymentsShot>
+  <div class="shot" role="img" aria-label="A payments ledger showing $12,480 outstanding and five recent invoices">
+    <Chrome title="Payments" />
+    <div class="shot-body">
+      <div class="pay-totals">
+        <div class="pay-total">
+          <p>Outstanding</p>
+          <p>$12,480</p>
+        </div>
+        <div class="pay-total is-highlight">
+          <p>Paid this month</p>
+          <p>$31,920</p>
+        </div>
+        <div class="pay-total">
+          <p>Avg. days to pay</p>
+          <p>11</p>
+        </div>
+      </div>
+
+      <div e:for={p of PAYMENTS} class="pay-row">
+        <div>
+          <p>{p.client}</p>
+          <p class="dim">{p.number}</p>
+        </div>
+        <span class="num">{p.amount}</span>
+        <span class={["shot-status", `is-${p.status}`]}>{p.label}</span>
+      </div>
+    </div>
+  </div>
+</PaymentsShot>

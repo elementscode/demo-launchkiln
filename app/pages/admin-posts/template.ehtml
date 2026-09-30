@@ -1,0 +1,57 @@
+import "./style.css";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { AdminShell } from "#app/shared/templates/admin-shell";
+import { coverUrl } from "#app/shared/services/media";
+import { Post } from "#app/shared/services/posts";
+
+function updated(d: Date): string {
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+<html lang="en" class="page-admin-posts" (posts: Post[])>
+  <head>
+    <title>Blog posts: Launchkiln admin</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <AdminShell current="/admin/posts" title="Blog posts">
+      <a slot="actions" class="button is-primary" href="/admin/posts/new">New post</a>
+
+      <div class="card">
+        <table e:if={posts.length > 0} class="ap-table">
+          <thead>
+            <tr>
+              <th>Cover</th>
+              <th>Title</th>
+              <th>Status</th>
+              <th>Updated</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr e:for={p of posts}>
+              <td>
+                <img e:if={p.coverId} class="ap-thumb" src={coverUrl(p.coverId, p.coverHash)} alt="" width="96" height="54">
+                <span e:else class="ap-thumb"></span>
+              </td>
+              <td class="ap-title">
+                <a href={`/admin/posts/${p.id}`}>{p.title}</a>
+                <p class="hint">/blog/{p.slug}</p>
+              </td>
+              <td>
+                <span e:if={p.publishedAt} class="pill is-success"><span class="pill-dot"></span>Published</span>
+                <span e:else class="pill">Draft</span>
+              </td>
+              <td>{updated(p.updatedAt)}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div e:if={posts.length === 0} class="ap-empty stack is-sm">
+          <p>No posts yet. Your first one will show on the blog as soon as you publish it.</p>
+          <div><a class="button is-primary" href="/admin/posts/new">Write a post</a></div>
+        </div>
+      </div>
+    </AdminShell>
+  </body>
+</html>

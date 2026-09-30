@@ -1,0 +1,148 @@
+@import "#app/shared/styles/page.css";
+
+.wl {
+  padding-block: var(--space-16) var(--space-8);
+}
+
+.wl-position {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: end;
+  gap: var(--space-4) var(--space-10);
+  padding-bottom: var(--space-10);
+}
+
+.wl-number {
+  margin: 0;
+  font-size: clamp(6rem, 18vw, 11rem);
+  font-weight: var(--weight-black);
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+
+.wl-number span {
+  font-size: 0.45em;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  vertical-align: 0.9em;
+  margin-right: 0.05em;
+}
+
+.wl-number.is-moved {
+  animation: wl-moved 1200ms var(--ease-out);
+}
+
+@keyframes wl-moved {
+  0% {
+    color: var(--accent);
+    transform: translateY(6px);
+  }
+
+  30% {
+    transform: translateY(0);
+  }
+
+  100% {
+    color: var(--ink);
+  }
+}
+
+.wl-position h1 {
+  margin: 0;
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+}
+
+.wl-position .lede {
+  margin: 0;
+}
+
+.wl-live {
+  font-size: var(--text-sm);
+}
+
+.wl-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-4);
+  padding-bottom: var(--space-8);
+  border-bottom: 1px solid var(--rule);
+}
+
+.wl-stats > * {
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-xl);
+  background: var(--bg-soft);
+}
+
+.wl-stats p {
+  margin: 0;
+}
+
+.wl-stat-value {
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  font-variant-numeric: tabular-nums;
+}
+
+.wl-share {
+  padding-block: var(--space-8);
+}
+
+.wl-share h2 {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+
+.wl-link {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.wl-link input {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+.wl-link > * {
+  margin: 0;
+}
+
+.wl-share .hint {
+  margin: 0;
+}
+
+@media (max-width: 40rem) {
+  .wl-position {
+    grid-template-columns: 1fr;
+  }
+
+  .wl-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .wl-stats > :last-child {
+    grid-column: 1 / -1;
+  }
+
+  .wl-link {
+    flex-direction: column;
+  }
+
+  .wl-link input {
+    flex: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-number.is-moved {
+    animation: none;
+  }
+}

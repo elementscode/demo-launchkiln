@@ -1,0 +1,27 @@
+import "./style.css";
+import { coverUrl } from "#app/shared/services/media";
+import { Post, readingMinutes } from "#app/shared/services/posts";
+
+export function postDate(post: Post): string {
+  return post.publishedAt?.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) ?? "Draft";
+}
+
+<PostCard (post: Post, featured: boolean = false)>
+  <a href={`/blog/${post.slug}`} class={["blog-card", featured ? "blog-featured" : "stack"]}>
+    <img e:if={post.coverId}
+         class="blog-cover"
+         src={coverUrl(post.coverId, post.coverHash)}
+         alt=""
+         width="1600"
+         height="900"
+         loading={featured ? "eager" : "lazy"}>
+    <div class="stack is-sm">
+      <span class="blog-meta cluster is-sm">
+        <time datetime={post.publishedAt?.toISOString()}>{postDate(post)}</time>
+        <span>{readingMinutes(post.body)} min read</span>
+      </span>
+      <h2>{post.title}</h2>
+      <p>{post.excerpt}</p>
+    </div>
+  </a>
+</PostCard>

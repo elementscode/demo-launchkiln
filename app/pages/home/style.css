@@ -1,0 +1,443 @@
+@import "#app/shared/styles/page.css";
+
+/* Launchkiln home. */
+
+.lk-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  align-items: center;
+  gap: var(--space-16);
+  padding-block: var(--space-20) var(--space-24);
+}
+
+.lk-hero h1 {
+  margin: 0;
+  font-size: clamp(var(--text-4xl), 5.2vw, var(--text-6xl));
+  font-weight: var(--weight-bold);
+  line-height: 1.02;
+  letter-spacing: var(--tracking-tighter);
+  text-wrap: balance;
+}
+
+.lk-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  align-self: flex-start;
+  margin: 0;
+  padding: var(--space-1) var(--space-3) var(--space-1) var(--space-1);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  background: var(--bg);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+
+.lk-eyebrow span {
+  padding: 2px var(--space-2-5);
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: var(--weight-semibold);
+  white-space: nowrap;
+}
+
+.lk-hero .lede {
+  max-width: 34rem;
+  margin: 0;
+}
+
+.lk-join {
+  max-width: 30rem;
+}
+
+.lk-join form {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.lk-join form > * {
+  margin: 0;
+}
+
+.lk-join input {
+  flex: 1;
+  min-width: 0;
+}
+
+.lk-join .hint {
+  margin: 0;
+}
+
+.lk-count {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
+  color: var(--ink);
+}
+
+.lk-invite {
+  max-width: 30rem;
+}
+
+.lk-section {
+  padding-block: var(--space-24);
+  scroll-margin-top: var(--space-12);
+}
+
+.lk-section-head {
+  max-width: 40rem;
+  margin-bottom: var(--space-14);
+}
+
+.lk-section-head h2 {
+  margin: 0;
+  font-size: clamp(var(--text-3xl), 3.4vw, var(--text-4xl));
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  text-wrap: balance;
+}
+
+.lk-section-head p {
+  margin: 0;
+}
+
+.lk-band {
+  background: var(--bg-soft);
+  border-block: 1px solid var(--rule-soft);
+}
+
+.lk-feature {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  align-items: center;
+  gap: var(--space-16);
+}
+
+.lk-feature + .lk-feature {
+  margin-top: var(--space-24);
+}
+
+.lk-feature.is-flipped {
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+}
+
+.lk-feature.is-flipped .lk-feature-copy {
+  order: 2;
+}
+
+.lk-feature h3 {
+  margin: 0;
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-snug);
+}
+
+.lk-feature p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.lk-facts li {
+  display: grid;
+  grid-template-columns: 1.25rem 1fr;
+  gap: var(--space-2);
+  color: var(--ink-soft);
+}
+
+.lk-facts svg {
+  width: 16px;
+  height: 16px;
+  margin-top: 4px;
+  color: var(--accent);
+}
+
+.lk-quotes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-12);
+}
+
+.lk-quote {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  margin: 0;
+  padding-top: var(--space-6);
+  border-top: 3px solid var(--ink);
+}
+
+.lk-quote-result {
+  margin: 0;
+  font-size: var(--text-3xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.lk-quote-result small {
+  display: block;
+  margin-top: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: normal;
+  color: var(--ink-soft);
+}
+
+.lk-quote blockquote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: var(--text-md);
+  font-style: normal;
+  line-height: var(--leading-relaxed);
+  color: var(--ink);
+}
+
+.lk-quote figcaption {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: auto;
+  font-size: var(--text-sm);
+  color: var(--ink-soft);
+}
+
+.lk-quote-avatar {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: hsl(var(--hue) 70% 92%);
+  color: hsl(var(--hue) 55% 32%);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-bold);
+}
+
+.lk-quote figcaption strong {
+  display: block;
+  color: var(--ink);
+  font-weight: var(--weight-semibold);
+}
+
+.lk-plans {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-6);
+  align-items: stretch;
+}
+
+.lk-plan {
+  display: flex;
+  flex-direction: column;
+}
+
+.lk-plan .card-body {
+  flex: 1;
+}
+
+.lk-plan.is-highlighted {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent), var(--shadow-lg);
+}
+
+.lk-plan-name {
+  justify-content: space-between;
+}
+
+.lk-plan-name h3 {
+  margin: 0;
+  font-size: var(--text-lg);
+  font-weight: var(--weight-semibold);
+}
+
+.lk-price {
+  margin: 0;
+  font-size: var(--text-5xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tighter);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.lk-price small {
+  margin-left: var(--space-1);
+  font-size: var(--text-md);
+  font-weight: var(--weight-medium);
+  letter-spacing: normal;
+  color: var(--ink-soft);
+}
+
+.lk-plan .hint {
+  margin: 0;
+}
+
+.lk-plan .card-foot {
+  justify-content: stretch;
+}
+
+.lk-plan .card-foot .button {
+  flex: 1;
+}
+
+.lk-pricing-note {
+  margin-top: var(--space-8);
+  color: var(--ink-soft);
+}
+
+.lk-faq {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--space-16);
+  align-items: start;
+}
+
+.lk-faq .lk-section-head {
+  position: sticky;
+  top: var(--space-24);
+  margin: 0;
+}
+
+.lk-faq details {
+  padding: var(--space-5) 0;
+  border-top: 1px solid var(--rule);
+}
+
+.lk-faq details:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+
+.lk-faq summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  list-style: none;
+  cursor: pointer;
+}
+
+.lk-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.lk-faq summary::after {
+  content: "+";
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  color: var(--ink-soft);
+  font-weight: var(--weight-medium);
+  line-height: 1;
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.lk-faq details[open] summary::after {
+  transform: rotate(45deg);
+}
+
+.lk-faq details p {
+  margin: var(--space-3) 0 0;
+  max-width: 60ch;
+  color: var(--ink-soft);
+  line-height: var(--leading-relaxed);
+}
+
+.lk-closing {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-12);
+  padding: var(--space-14);
+  border-radius: var(--radius-3xl);
+  background: var(--bg-inverse);
+  color: var(--ink-inverse);
+}
+
+.lk-closing h2 {
+  margin: 0;
+  font-size: clamp(var(--text-3xl), 3.4vw, var(--text-4xl));
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+  color: inherit;
+}
+
+.lk-closing p {
+  margin: 0;
+  opacity: 0.8;
+}
+
+.lk-closing .lk-join {
+  justify-self: end;
+  width: 100%;
+}
+
+.lk-closing .lk-join .hint,
+.lk-closing .lk-count {
+  color: inherit;
+}
+
+@media (max-width: 60rem) {
+  .lk-hero,
+  .lk-feature,
+  .lk-feature.is-flipped,
+  .lk-faq,
+  .lk-closing {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .hero-toast {
+    left: var(--space-4);
+  }
+
+  .lk-hero {
+    gap: var(--space-12);
+    padding-block: var(--space-12) var(--space-16);
+  }
+
+  .lk-feature,
+  .lk-feature.is-flipped {
+    gap: var(--space-8);
+  }
+
+  .lk-feature.is-flipped .lk-feature-copy {
+    order: 0;
+  }
+
+  .lk-faq .lk-section-head {
+    position: static;
+  }
+
+  .lk-quotes,
+  .lk-plans {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lk-closing {
+    padding: var(--space-8);
+  }
+}
+
+@media (max-width: 30rem) {
+  .lk-join form {
+    flex-direction: column;
+  }
+
+  .lk-join input {
+    flex: none;
+  }
+
+  .lk-section {
+    padding-block: var(--space-16);
+  }
+}

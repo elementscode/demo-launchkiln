@@ -1,0 +1,62 @@
+@import "#app/shared/styles/page.css";
+
+.post {
+  padding-block: var(--space-14) 0;
+}
+
+.post-head h1 {
+  margin: 0;
+  font-size: clamp(var(--text-3xl), 4.4vw, var(--text-5xl));
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tighter);
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.post-head .lede {
+  margin: 0;
+}
+
+.post-cover {
+  max-width: var(--container-4xl);
+  margin: var(--space-10) auto;
+  padding-inline: var(--container-padding);
+}
+
+.post-body {
+  font-size: var(--text-md);
+  line-height: var(--leading-relaxed);
+}
+
+.post-body table {
+  width: 100%;
+}
+
+.post-cta {
+  margin-top: var(--space-14);
+  padding: var(--space-8);
+  border-radius: var(--radius-2xl);
+  background: var(--bg-soft);
+  border: 1px solid var(--rule-soft);
+}
+
+.post-cta h2 {
+  margin: 0;
+  font-size: var(--text-xl);
+}
+
+.post-cta p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.post-more {
+  margin-top: var(--space-20);
+  padding-top: var(--space-12);
+  border-top: 1px solid var(--rule);
+}
+
+.post-more > h2 {
+  margin: 0 0 var(--space-8);
+  font-size: var(--text-xl);
+}

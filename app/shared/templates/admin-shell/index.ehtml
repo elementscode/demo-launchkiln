@@ -1,0 +1,49 @@
+import "./style.css";
+import { redirect, session } from "@elements/app";
+import { signout } from "#app/shared/services/auth";
+import { Mark } from "#app/shared/templates/site";
+
+const NAV = [
+  { href: "/admin/waitlist", label: "Waitlist", icon: "M3 4h10M3 8h10M3 12h6" },
+  { href: "/admin/posts", label: "Blog posts", icon: "M4 2.5h6l2.5 2.5v8.5h-8.5zM6.5 7h4M6.5 10h4" },
+  { href: "/admin/pricing", label: "Pricing", icon: "M8 2v12M11 4.5H6.5a2 2 0 0 0 0 4h3a2 2 0 0 1 0 4H5" },
+  { href: "/admin/faq", label: "FAQ", icon: "M6 6a2 2 0 1 1 2.8 1.8c-.5.3-.8.7-.8 1.2V10M8 12.5v.5" },
+];
+
+function onSignout() {
+  signout();
+  redirect("/signin");
+}
+
+<AdminShell (current: string, title: string)>
+  <div class="app has-sidebar admin">
+    <aside class="admin-side">
+      <a class="site-brand row" href="/"><Mark /> Launchkiln</a>
+
+      <nav class="admin-nav stack is-xs" aria-label="Admin">
+        <a e:for={item of NAV} href={item.href} aria-current={current === item.href ? "page" : undefined}>
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+            <path d={item.icon} fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          {item.label}
+        </a>
+      </nav>
+
+      <div class="admin-me stack is-sm">
+        <p class="hint truncate">{session.get("userName")}</p>
+        <div class="cluster is-sm">
+          <a class="link-muted" href="/" target="_blank">View site</a>
+          <button type="button" class="is-ghost is-sm" onclick={() => onSignout()}>Sign out</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="app-main admin-main">
+      <header class="admin-head row">
+        <h1>{title}</h1>
+        <div class="cluster is-sm"><slot name="actions"/></div>
+      </header>
+      <slot/>
+    </main>
+  </div>
+</AdminShell>

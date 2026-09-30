@@ -1,0 +1,52 @@
+@import "#app/shared/styles/page.css";
+
+.ap-table {
+  width: 100%;
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.ap-table td {
+  vertical-align: middle;
+}
+
+.ap-thumb {
+  display: block;
+  width: 96px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+}
+
+.ap-title a {
+  color: var(--ink);
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}
+
+.ap-title a:hover {
+  text-decoration: underline;
+}
+
+.ap-title p {
+  margin: var(--space-1) 0 0;
+}
+
+.ap-empty {
+  padding: var(--space-12);
+  text-align: center;
+}
+
+@media (max-width: 30rem) {
+  .ap-table th:nth-child(4),
+  .ap-table td:nth-child(4),
+  .ap-title p {
+    display: none;
+  }
+
+  .ap-thumb {
+    width: 64px;
+    height: 36px;
+  }
+}
