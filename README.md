@@ -1,10 +1,12 @@
+![Launchkiln, a prelaunch marketing site built with Elements: the home page hero with an invoice stamped paid, a payment notification and the waitlist form.](https://elements.dev/demos/01a0f417-e8ad-7900-b01b-5aee50c6ca2f/poster?v=cc1da6193af1)
+
 # Launchkiln
 
 > A demo app built with [Elements](https://elements.dev).
 
 A home page with pricing and FAQ, a blog, and a waitlist where referral links move people up the list live, plus an admin for posts, plans and CSV export.
 
-**Demo:** [Launchkiln](TBD)
+**Demo:** [Launchkiln](https://elements.dev/demos/01a0f417-e8ad-7900-b01b-5aee50c6ca2f)
 
 ## Agent specs
 
