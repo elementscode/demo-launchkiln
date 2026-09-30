@@ -1,0 +1,93 @@
+import "./style.css";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { LiveView } from "@elements/app";
+import type { Listener } from "@elements/app";
+import { Site } from "#app/shared/templates/site";
+import { SignupPosition, WaitlistTotal } from "#app/shared/services/waitlist";
+
+interface Share {
+  copied: boolean;
+}
+
+async function onCopy(link: string, share: Share) {
+  await navigator.clipboard.writeText(link);
+  share.copied = true;
+  setTimeout(() => share.copied = false, 2000);
+}
+
+function friendsLabel(n: number): string {
+  if (n === 0) {
+    return "No friends have joined through your link yet.";
+  }
+
+  return n === 1 ? "1 friend joined through your link." : `${n} friends joined through your link.`;
+}
+
+// Keyed by the number itself, so each new place is a new element and its
+// highlight plays once: the visitor sees the move happen.
+function places(position: number): { id: string; n: number }[] {
+  return [{ id: String(position), n: position }];
+}
+
+<Position (me: SignupPosition, total: number)>
+  <div class="wl-position">
+    <div aria-live="polite">
+      <p e:for={place of places(me.position)} class="wl-number is-moved">
+        <span>#</span>{place.n.toLocaleString("en-US")}
+      </p>
+    </div>
+    <div class="stack is-sm">
+      <h1>{me.position === 1 ? "You're first in line." : "Your place in line"}</h1>
+      <p class="lede">{(me.position - 1).toLocaleString("en-US")} ahead of you, {Math.max(total - me.position, 0).toLocaleString("en-US")} behind.</p>
+      <p class="wl-live hint"><span class="pill is-success"><span class="pill-dot"></span>Live</span> This page moves as the list does.</p>
+    </div>
+  </div>
+
+  <div class="wl-stats">
+    <div>
+      <p class="hint">Friends referred</p>
+      <p class="wl-stat-value">{me.referrals}</p>
+    </div>
+    <div>
+      <p class="hint">On the list</p>
+      <p class="wl-stat-value">{total.toLocaleString("en-US")}</p>
+    </div>
+    <div>
+      <p class="hint">Joined</p>
+      <p class="wl-stat-value">{me.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric" })}</p>
+    </div>
+  </div>
+</Position>
+
+<html lang="en" class="page-waitlist" (
+  positions: LiveView<SignupPosition>,
+  total: number,
+  listener: Listener<WaitlistTotal>,
+  link: string,
+  private count: { value: number } = { value: total },
+  private share: Share = { copied: false },
+) oninit={() => listener.on("notify", (t) => count.value = t.total)}>
+  <head>
+    <title>Your place on the Launchkiln waitlist</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <Site>
+      <main class="page-shell is-form wl">
+        <Position e:for={me of positions} {me} total={count.value} />
+
+        <section class="wl-share stack">
+          <h2>Move up the list</h2>
+          <p>{friendsLabel(positions.at(0)?.referrals ?? 0)} Every friend who joins through this link moves you ahead of everyone with fewer referrals.</p>
+          <div class="wl-link">
+            <label class="sr-only" for="referral-link">Your referral link</label>
+            <input id="referral-link" type="text" value={link} readonly onfocus={(e) => (e.target as HTMLInputElement).select()}>
+            <button type="button" class="is-primary" onclick={() => onCopy(link, share)}>{share.copied ? "Copied" : "Copy link"}</button>
+          </div>
+          <p class="hint">Bookmark this page to check your place. Joining again with the same email brings you back here.</p>
+        </section>
+      </main>
+    </Site>
+  </body>
+</html>

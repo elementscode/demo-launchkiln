@@ -1,0 +1,261 @@
+import "./style.css";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { redirect } from "@elements/app";
+import type { Listener } from "@elements/app";
+import { Site } from "#app/shared/templates/site";
+import { Faq, Plan, formatPrice } from "#app/shared/services/content";
+import { WaitlistTotal, joinWaitlist } from "#app/shared/services/waitlist";
+import { HeroInvoice, InvoiceShot, PaymentsShot, RemindersShot } from "./screens";
+
+interface JoinState {
+  email: string;
+  error: string;
+  busy: boolean;
+}
+
+interface Quote {
+  id: string;
+  result: string;
+  resultLabel: string;
+  text: string;
+  name: string;
+  role: string;
+  hue: number;
+}
+
+const QUOTES: Quote[] = [
+  {
+    id: "q1",
+    result: "19 days",
+    resultLabel: "faster to get paid, on average",
+    text: "I used to lose a Friday every month to chasing invoices. Now the reminders go out on their own and I find out a client paid from a notification.",
+    name: "Mara Lindqvist",
+    role: "Brand designer, Stockholm",
+    hue: 18,
+  },
+  {
+    id: "q2",
+    result: "$0",
+    resultLabel: "written off since switching",
+    text: "The pay button on the invoice is the whole thing. Clients who used to take six weeks pay the same afternoon, because it takes them ten seconds.",
+    name: "Kofi Mensah",
+    role: "Founder, Harbor & Pine",
+    hue: 150,
+  },
+  {
+    id: "q3",
+    result: "4 hours",
+    resultLabel: "of bookkeeping saved each month",
+    text: "Bank transfers used to arrive with no reference and I would spend an evening matching them. Launchkiln matches them before I've seen the email.",
+    name: "Priya Patel",
+    role: "Studio lead, Juniper Health",
+    hue: 262,
+  },
+];
+
+function onJoin(form: JoinState, ref: string) {
+  form.error = "";
+  form.busy = true;
+
+  try {
+    let code = joinWaitlist({ email: form.email, ref });
+    redirect(`/waitlist/${code}`);
+  } catch (err: any) {
+    form.error = err.message;
+    form.busy = false;
+  }
+}
+
+function initials(name: string): string {
+  return name.split(" ").map((w) => w[0]).join("");
+}
+
+function peopleLabel(n: number): string {
+  return n === 1 ? "1 person is" : `${n.toLocaleString("en-US")} people are`;
+}
+
+<Check>
+  <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+    <path d="M3 8.5l3.2 3L13 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+</Check>
+
+<JoinBox (
+  ref: string,
+  count: { value: number },
+  label: string = "Your email",
+  private form: JoinState = { email: "", error: "", busy: false },
+)>
+  <div class="lk-join stack is-sm">
+    <form onsubmit={() => onJoin(form, ref)} aria-label="Join the waitlist">
+      <label class="sr-only" for={`join-${label}`}>{label}</label>
+      <input id={`join-${label}`}
+             class={["is-lg", form.error && "is-error"]}
+             type="email"
+             name="email"
+             value={form.email}
+             autocomplete="email"
+             autocapitalize="none"
+             spellcheck={false}
+             placeholder="you@studio.com"
+             required>
+      <button type="submit" class="is-primary is-lg" disabled={form.busy}>Join the waitlist</button>
+    </form>
+    <p e:if={form.error} class="error" role="alert">{form.error}</p>
+    <p class="hint"><span class="lk-count">{peopleLabel(count.value)}</span> already in line. Invite friends to move up.</p>
+  </div>
+</JoinBox>
+
+<html lang="en" class="page-home" (
+  plans: Plan[],
+  faqs: Faq[],
+  total: number,
+  listener: Listener<WaitlistTotal>,
+  ref: string = "",
+  private count: { value: number } = { value: total },
+) oninit={() => listener.on("notify", (t) => count.value = t.total)}>
+  <head>
+    <title>Launchkiln: send the invoice, we'll chase it</title>
+    <meta name="description" content="Invoicing for freelancers and small studios. Send invoices in a minute, let reminders go out on their own, and get paid by card or bank transfer.">
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <Site>
+      <main>
+        <section id="join" class="page-shell lk-hero">
+          <div class="stack is-lg">
+            <p class="lk-eyebrow"><span>Private beta</span> Opening early next year</p>
+            <h1>Send the invoice. We'll chase it.</h1>
+            <p class="lede">Launchkiln is invoicing for freelancers and small studios. Invoices in a minute, reminders that go out on their own, and payments matched the moment they land.</p>
+            <div e:if={ref} class="callout is-accent lk-invite">
+              A friend invited you. Joining through their link moves them up the list.
+            </div>
+            <JoinBox {ref} {count} />
+          </div>
+
+          <HeroInvoice />
+        </section>
+
+        <section id="features" class="lk-section lk-band">
+          <div class="page-shell">
+            <div class="lk-section-head stack">
+              <h2>The work is the easy part. Launchkiln handles the rest.</h2>
+              <p class="lede">We ran a design studio for ten years. These are the three jobs that ate our Fridays.</p>
+            </div>
+
+            <div class="lk-feature">
+              <div class="lk-feature-copy stack">
+                <h3>An invoice in under a minute</h3>
+                <p>Pick a client, add line items, send. Numbering, tax, and currency are filled in for you, and your logo is on every page.</p>
+                <ul class="lk-facts stack is-sm">
+                  <li><Check /> Saved clients and line items</li>
+                  <li><Check /> Recurring invoices for retainers</li>
+                  <li><Check /> 24 currencies and local tax rules</li>
+                </ul>
+              </div>
+              <InvoiceShot />
+            </div>
+
+            <div class="lk-feature is-flipped">
+              <div class="lk-feature-copy stack">
+                <h3>Reminders that go out on their own</h3>
+                <p>Set a schedule once. Launchkiln sends a polite heads-up before the due date and firmer notes after, from your own email address.</p>
+                <ul class="lk-facts stack is-sm">
+                  <li><Check /> Edit every word of every reminder</li>
+                  <li><Check /> Late fees added when you choose</li>
+                  <li><Check /> Stops the moment a client pays</li>
+                </ul>
+              </div>
+              <RemindersShot />
+            </div>
+
+            <div class="lk-feature">
+              <div class="lk-feature-copy stack">
+                <h3>Paid, and matched, the same day</h3>
+                <p>Clients pay from the invoice by card, Apple Pay, or bank transfer. Each payment is matched to its invoice, so you always know what's outstanding.</p>
+                <ul class="lk-facts stack is-sm">
+                  <li><Check /> Payouts in two business days</li>
+                  <li><Check /> Partial payments and deposits</li>
+                  <li><Check /> Exports for your accountant</li>
+                </ul>
+              </div>
+              <PaymentsShot />
+            </div>
+          </div>
+        </section>
+
+        <section class="lk-section page-shell" aria-labelledby="quotes-title">
+          <div class="lk-section-head stack">
+            <h2 id="quotes-title">From the private beta</h2>
+            <p class="lede">Forty studios have been sending real invoices with Launchkiln since spring.</p>
+          </div>
+
+          <div class="lk-quotes">
+            <figure e:for={q of QUOTES} class="lk-quote">
+              <p class="lk-quote-result">{q.result}<small>{q.resultLabel}</small></p>
+              <blockquote>{q.text}</blockquote>
+              <figcaption>
+                <span class="lk-quote-avatar" style={`--hue: ${q.hue}`}>{initials(q.name)}</span>
+                <span><strong>{q.name}</strong>{q.role}</span>
+              </figcaption>
+            </figure>
+          </div>
+        </section>
+
+        <section id="pricing" class="lk-section lk-band">
+          <div class="page-shell">
+            <div class="lk-section-head stack">
+              <h2>Simple pricing, no per-invoice fees</h2>
+              <p class="lede">Card and bank payments are charged at cost. Everyone invited from the waitlist keeps 30% off for a year.</p>
+            </div>
+
+            <div class="lk-plans">
+              <div e:for={plan of plans} class={["card", "lk-plan", plan.highlighted && "is-highlighted"]}>
+                <div class="card-body stack is-lg">
+                  <div class="lk-plan-name row">
+                    <h3>{plan.name}</h3>
+                    <span e:if={plan.highlighted} class="pill is-accent">Most popular</span>
+                  </div>
+                  <p class="lk-price">{formatPrice(plan.priceCents)}<small e:if={plan.priceCents > 0}>/ month</small></p>
+                  <p class="hint">{plan.blurb}</p>
+                  <ul class="lk-facts stack is-sm">
+                    <li e:for={feature of plan.features} e:key={(feature: string) => feature}><Check /> {feature}</li>
+                  </ul>
+                </div>
+                <div class="card-foot">
+                  <a class={["button", plan.highlighted && "is-primary"]} href="#join">{plan.cta}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="faq" class="lk-section page-shell">
+          <div class="lk-faq">
+            <div class="lk-section-head stack">
+              <h2>Questions, answered</h2>
+              <p class="lede">Anything else? Reply to your waitlist email and a person will answer.</p>
+            </div>
+
+            <div>
+              <details e:for={faq of faqs}>
+                <summary>{faq.question}</summary>
+                <p>{faq.answer}</p>
+              </details>
+            </div>
+          </div>
+        </section>
+
+        <section class="page-shell">
+          <div class="lk-closing">
+            <div class="stack">
+              <h2>Get your invite early</h2>
+              <p>We're opening in small batches. Every friend who joins through your link moves you up the list.</p>
+            </div>
+            <JoinBox {ref} {count} label="Email address" />
+          </div>
+        </section>
+      </main>
+    </Site>
+  </body>
+</html>

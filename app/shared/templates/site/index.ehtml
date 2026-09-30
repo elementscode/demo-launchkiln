@@ -1,0 +1,71 @@
+import "./style.css";
+
+const NAV = [
+  { href: "/#features", label: "Features" },
+  { href: "/#pricing", label: "Pricing" },
+  { href: "/#faq", label: "FAQ" },
+  { href: "/blog", label: "Blog" },
+];
+
+<Mark>
+  <svg class="site-mark" width="26" height="26" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+    <path d="M5 29V15a11 11 0 0 1 22 0v14" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M11 29v-8.5a5 5 0 0 1 10 0V29" fill="currentColor" opacity="0.35"/>
+  </svg>
+</Mark>
+
+<Site (current: string = "")>
+  <header class="site-header">
+    <div class="site-bar row">
+      <a class="site-brand row" href="/">
+        <Mark />
+        Launchkiln
+      </a>
+
+      <nav class="site-nav cluster is-lg" aria-label="Main">
+        <a e:for={item of NAV}
+           class="link-muted site-nav-link"
+           href={item.href}
+           aria-current={current === item.href ? "page" : undefined}>{item.label}</a>
+        <a class="button is-primary is-sm" href="/#join">Join the waitlist</a>
+      </nav>
+    </div>
+  </header>
+
+  <slot/>
+
+  <footer class="site-footer">
+    <div class="site-footer-inner">
+      <div class="stack is-sm">
+        <a class="site-brand row" href="/">
+          <Mark />
+          Launchkiln
+        </a>
+        <p class="hint">Invoicing for freelancers and small studios. Opening to the waitlist early next year.</p>
+      </div>
+
+      <div class="stack is-sm">
+        <h2>Product</h2>
+        <ul class="stack is-xs">
+          <li><a class="link-muted" href="/#features">Features</a></li>
+          <li><a class="link-muted" href="/#pricing">Pricing</a></li>
+          <li><a class="link-muted" href="/#faq">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="stack is-sm">
+        <h2>Company</h2>
+        <ul class="stack is-xs">
+          <li><a class="link-muted" href="/blog">Blog</a></li>
+          <li><a class="link-muted" href="/#join">Join the waitlist</a></li>
+          <li><a class="link-muted" href="/admin">Admin</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="site-legal cluster">
+      <span>© 2026 Launchkiln, Inc.</span>
+      <span>Made for people who would rather be doing the work.</span>
+    </div>
+  </footer>
+</Site>

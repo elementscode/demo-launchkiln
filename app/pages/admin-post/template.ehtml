@@ -1,0 +1,185 @@
+import "./style.css";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { File, ValidationError, raw, redirect } from "@elements/app";
+import { marked } from "marked";
+import { AdminShell } from "#app/shared/templates/admin-shell";
+import { coverUrl } from "#app/shared/services/media";
+import { Post, PostInput, deletePost, savePost, slugify } from "#app/shared/services/posts";
+
+interface Editor {
+  tab: string;
+  slugTouched: boolean;
+  saving: boolean;
+  saved: boolean;
+  error: string;
+  errors: Record<string, string[]>;
+}
+
+function toForm(post: Post): PostInput {
+  return {
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    body: post.body,
+    published: post.publishedAt !== null,
+    cover: null,
+    removeCover: false,
+  };
+}
+
+function onTitle(form: PostInput, editor: Editor) {
+  if (!editor.slugTouched) {
+    form.slug = slugify(form.title);
+  }
+}
+
+function onSave(post: Post, isNew: boolean, form: PostInput, editor: Editor) {
+  editor.saving = true;
+  editor.saved = false;
+  editor.error = "";
+  editor.errors = {};
+
+  try {
+    let saved = savePost(isNew ? null : post.id, form);
+
+    if (isNew) {
+      redirect(`/admin/posts/${saved.id}`);
+      return;
+    }
+
+    Object.assign(post, saved);
+    form.cover = null;
+    form.removeCover = false;
+    editor.saved = true;
+  } catch (err: any) {
+    if (err instanceof ValidationError && err.errors) {
+      editor.errors = err.errors as Record<string, string[]>;
+    } else {
+      editor.error = err.message;
+    }
+  }
+
+  editor.saving = false;
+}
+
+function onDelete(post: Post) {
+  if (!confirm(`Delete “${post.title}”? This can't be undone.`)) {
+    return;
+  }
+
+  deletePost(post.id);
+  redirect("/admin/posts");
+}
+
+function fieldError(editor: Editor, field: string): string {
+  return editor.errors[field]?.[0] ?? "";
+}
+
+function preview(body: string): string {
+  return marked.parse(body || "_Nothing to preview yet._") as string;
+}
+
+function currentCover(post: Post, form: PostInput): string {
+  return form.removeCover ? "" : coverUrl(post.coverId, post.coverHash);
+}
+
+<html lang="en" class="page-admin-post" (
+  post: Post,
+  isNew: boolean,
+  private form: PostInput = toForm(post),
+  private editor: Editor = { tab: "write", slugTouched: !isNew, saving: false, saved: false, error: "", errors: {} },
+)>
+  <head>
+    <title>{isNew ? "New post" : post.title}: Launchkiln admin</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <AdminShell current="/admin/posts" title={isNew ? "New post" : "Edit post"}>
+      <div slot="actions" class="cluster">
+        <a class="link-muted" href="/admin/posts">All posts</a>
+        <a e:if={!isNew && post.publishedAt} class="button is-sm" href={`/blog/${post.slug}`} target="_blank">View on blog</a>
+      </div>
+
+      <form class="pe" onsubmit={() => onSave(post, isNew, form, editor)}>
+        <div class="card">
+          <div class="card-body stack">
+            <div class="field">
+              <label for="pe-title">Title</label>
+              <input id="pe-title"
+                     class={["is-lg", fieldError(editor, "title") && "is-error"]}
+                     value={form.title}
+                     oninput={() => onTitle(form, editor)}
+                     placeholder="What's this post about?"
+                     required>
+              <p e:if={fieldError(editor, "title")} class="error">{fieldError(editor, "title")}</p>
+            </div>
+
+            <div class="field">
+              <label for="pe-slug">URL</label>
+              <div class="pe-slug">
+                <span>/blog/</span>
+                <input id="pe-slug"
+                       class={["is-sm", fieldError(editor, "slug") && "is-error"]}
+                       value={form.slug}
+                       oninput={() => editor.slugTouched = true}
+                       required>
+              </div>
+              <p e:if={fieldError(editor, "slug")} class="error">{fieldError(editor, "slug")}</p>
+            </div>
+
+            <div class="field">
+              <label for="pe-excerpt">Summary</label>
+              <textarea id="pe-excerpt" rows="2" value={form.excerpt} placeholder="One or two sentences for the blog index and search results."/>
+            </div>
+
+            <div class="tabs">
+              <div class="tab-list" role="tablist">
+                <button type="button" role="tab" class={["tab", editor.tab === "write" && "is-active"]} aria-selected={editor.tab === "write"} onclick={() => editor.tab = "write"}>Write</button>
+                <button type="button" role="tab" class={["tab", editor.tab === "preview" && "is-active"]} aria-selected={editor.tab === "preview"} onclick={() => editor.tab = "preview"}>Preview</button>
+              </div>
+
+              <div class="tab-panel">
+                <textarea e:if={editor.tab === "write"}
+                          class="pe-body"
+                          aria-label="Body in markdown"
+                          value={form.body}
+                          placeholder="Write in markdown. ## for a heading, **bold**, - for a list."/>
+                <div e:else class="prose pe-preview">{raw(preview(form.body))}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pe-side card">
+          <div class="card-body stack is-lg">
+            <fieldset class="pe-status stack is-sm">
+              <legend>Status</legend>
+              <label><input type="radio" name="status" checked={!form.published} onchange={() => form.published = false}> Draft, only you can see it</label>
+              <label><input type="radio" name="status" checked={form.published} onchange={() => form.published = true}> Published on the blog</label>
+            </fieldset>
+
+            <div class="field stack is-sm">
+              <label for="pe-cover">Cover image</label>
+              <img e:if={currentCover(post, form) && !form.cover} class="pe-cover" src={currentCover(post, form)} alt="Current cover" width="1600" height="900">
+              <div e:elseif={form.cover} class="pe-cover-empty">{form.cover!.name} will upload on save</div>
+              <div e:else class="pe-cover-empty">No cover</div>
+              <input id="pe-cover" type="file" accept="image/png,image/jpeg,image/webp,image/gif" value={form.cover}>
+              <p class="hint">PNG, JPEG, WebP, or GIF up to 5 MB. 16:9 looks best.</p>
+              <p e:if={fieldError(editor, "cover")} class="error">{fieldError(editor, "cover")}</p>
+              <label e:if={post.coverId && !form.cover}><input type="checkbox" checked={form.removeCover}> Remove the cover</label>
+            </div>
+
+            <p e:if={editor.error} class="error" role="alert">{editor.error}</p>
+            <p e:if={editor.saved} class="hint" role="status">Saved.</p>
+          </div>
+
+          <div class="card-foot">
+            <button e:if={!isNew} type="button" class="is-ghost is-danger is-sm" onclick={() => onDelete(post)}>Delete</button>
+            <button type="submit" class="is-primary" disabled={editor.saving}>{isNew ? "Create post" : "Save changes"}</button>
+          </div>
+        </div>
+      </form>
+    </AdminShell>
+  </body>
+</html>

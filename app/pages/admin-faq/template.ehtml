@@ -1,0 +1,140 @@
+import "./style.css";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { ValidationError } from "@elements/app";
+import { AdminShell } from "#app/shared/templates/admin-shell";
+import { Faq, deleteFaq, saveFaq } from "#app/shared/services/content";
+
+interface FaqForm {
+  id: string;
+  faqId: string | null;
+  question: string;
+  answer: string;
+  sortOrder: number;
+  saving: boolean;
+  errors: Record<string, string[]>;
+}
+
+interface FaqState {
+  faqs: FaqForm[];
+  notice: string;
+  added: number;
+}
+
+function toForm(faq: Faq): FaqForm {
+  return {
+    id: faq.id,
+    faqId: faq.id,
+    question: faq.question,
+    answer: faq.answer,
+    sortOrder: faq.sortOrder,
+    saving: false,
+    errors: {},
+  };
+}
+
+function onAdd(state: FaqState) {
+  state.added++;
+  state.faqs.push({
+    id: `new-${state.added}`,
+    faqId: null,
+    question: "",
+    answer: "",
+    sortOrder: state.faqs.length + 1,
+    saving: false,
+    errors: {},
+  });
+}
+
+function onSave(state: FaqState, form: FaqForm) {
+  form.saving = true;
+  form.errors = {};
+
+  try {
+    let faqs = saveFaq(form.faqId, { question: form.question, answer: form.answer, sortOrder: Number(form.sortOrder) });
+    let unsaved = state.faqs.filter((f) => f.faqId === null && f !== form);
+    state.faqs = [...faqs.map(toForm), ...unsaved];
+    state.notice = "Saved. The FAQ on the home page is up to date.";
+  } catch (err: any) {
+    form.saving = false;
+
+    if (err instanceof ValidationError && err.errors) {
+      form.errors = err.errors as Record<string, string[]>;
+      return;
+    }
+
+    throw err;
+  }
+}
+
+function onDelete(state: FaqState, form: FaqForm) {
+  if (form.faqId === null) {
+    state.faqs = state.faqs.filter((f) => f !== form);
+    return;
+  }
+
+  if (!confirm("Delete this question?")) {
+    return;
+  }
+
+  let faqs = deleteFaq(form.faqId);
+  let unsaved = state.faqs.filter((f) => f.faqId === null);
+  state.faqs = [...faqs.map(toForm), ...unsaved];
+  state.notice = "Deleted the question.";
+}
+
+function err(form: FaqForm, field: string): string {
+  return form.errors[field]?.[0] ?? "";
+}
+
+<FaqEditor (form: FaqForm, state: FaqState)>
+  <form class={["card", "ed-card", form.faqId === null && "is-new"]} onsubmit={() => onSave(state, form)}>
+    <div class="card-body stack">
+      <div class="field">
+        <label for={`q-${form.id}`}>Question</label>
+        <input id={`q-${form.id}`} class={err(form, "question") && "is-error"} value={form.question} required>
+        <p e:if={err(form, "question")} class="error">{err(form, "question")}</p>
+      </div>
+
+      <div class="field">
+        <label for={`a-${form.id}`}>Answer</label>
+        <textarea id={`a-${form.id}`} class={err(form, "answer") && "is-error"} value={form.answer}/>
+        <p e:if={err(form, "answer")} class="error">{err(form, "answer")}</p>
+      </div>
+
+      <div class="field">
+        <label for={`o-${form.id}`}>Order</label>
+        <input id={`o-${form.id}`} class="faq-order" type="number" min="0" value={form.sortOrder}>
+      </div>
+    </div>
+
+    <div class="card-foot">
+      <button type="button" class="is-ghost is-sm" onclick={() => onDelete(state, form)}>{form.faqId ? "Delete" : "Discard"}</button>
+      <button type="submit" class="is-primary is-sm" disabled={form.saving}>{form.faqId ? "Save" : "Add question"}</button>
+    </div>
+  </form>
+</FaqEditor>
+
+<html lang="en" class="page-admin-faq" (
+  faqs: Faq[],
+  private state: FaqState = { faqs: faqs.map(toForm), notice: "", added: 0 },
+)>
+  <head>
+    <title>FAQ: Launchkiln admin</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <AdminShell current="/admin/faq" title="FAQ">
+      <div slot="actions" class="cluster">
+        <a class="link-muted" href="/#faq" target="_blank">View on site</a>
+        <button type="button" class="is-primary" onclick={() => onAdd(state)}>New question</button>
+      </div>
+
+      <p e:if={state.notice} class="callout is-success ed-notice" role="status">{state.notice}</p>
+
+      <div class="faq-list stack">
+        <FaqEditor e:for={form of state.faqs} {form} {state} />
+      </div>
+    </AdminShell>
+  </body>
+</html>

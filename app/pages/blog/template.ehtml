@@ -1,0 +1,31 @@
+import "./style.css";
+import favicon from "#app/shared/assets/favicons/favicon.svg";
+import { Site } from "#app/shared/templates/site";
+import { Post } from "#app/shared/services/posts";
+import { PostCard } from "#app/shared/templates/post-card";
+
+<html lang="en" class="page-blog" (posts: Post[])>
+  <head>
+    <title>Blog: Launchkiln</title>
+    <meta name="description" content="Notes from the Launchkiln team on invoicing, reminders, and getting paid on time.">
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+  </head>
+  <body>
+    <Site current="/blog">
+      <main class="page-shell">
+        <header class="blog-head stack">
+          <h1>Notes on getting paid</h1>
+          <p class="lede">What we're learning while we build Launchkiln, from the invoices of 400 freelancers and our own ten years of running a studio.</p>
+        </header>
+
+        <p e:if={posts.length === 0} class="lede">The first post is on its way. Join the waitlist and we'll send it to you.</p>
+
+        <PostCard e:if={posts.length > 0} post={posts[0]} featured={true} />
+
+        <div class="blog-grid">
+          <PostCard e:for={post of posts.slice(1)} {post} />
+        </div>
+      </main>
+    </Site>
+  </body>
+</html>

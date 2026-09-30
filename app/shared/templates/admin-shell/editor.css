@@ -1,0 +1,44 @@
+/* Shared by the pricing and FAQ editors: a notice line and card grids. */
+
+.ed-notice {
+  margin: 0 0 var(--space-5);
+}
+
+.ed-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(19rem, 1fr));
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.ed-grid > * {
+  margin: 0;
+}
+
+.ed-card .card-foot {
+  justify-content: space-between;
+}
+
+.ed-card.is-new {
+  border-style: dashed;
+}
+
+.ed-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.ed-price {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1-5);
+}
+
+.ed-price span {
+  color: var(--ink-dim);
+}
+
+.ed-card textarea {
+  min-height: 7rem;
+}
