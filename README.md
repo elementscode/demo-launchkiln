@@ -29,7 +29,7 @@ Launchkiln needed a waitlist where every referral reorders the line and each sig
 
 ### What Elements gave the app
 
-- **Live waitlist positions.** `signups` and `signupPositions` are LiveTables in `app/shared/services/waitlist.ts`. Triggers in the schema migration count each referral, rerank the line and broadcast only the rows whose place changed. `signupPositions` is partitioned by referral code, so each status page hears its own position and nobody else's email.
+- **Live waitlist positions.** `signups` and `signupPositions` are LiveTables in `app/shared/services/waitlist.ts`. Triggers in the schema migration count each referral, rerank the line and broadcast only the rows whose place changed. `signupPositions` is partitioned by referral code, so each status page hears its own row, in its public columns.
 - **A live signup count.** `waitlistTotal` is a Channel in the same file. `joinWaitlist` publishes the new total, and the home and status pages listen for it.
 - **Server calls as function calls.** The join form calls `joinWaitlist`, an `@rpc` that returns the referral code, or the existing code for an email already on the list. The admin pages call `savePost`, `savePlan` and `saveFaq` the same way, and `savePost` takes the cover image file as an argument.
 - **Covers from the database.** Covers live in the `media` table, and `app/routes/media.ts` serves each one at a hashed url that browsers cache for a year. `app/routes/waitlist-csv.ts` returns the waitlist as a CSV export for the admin.
