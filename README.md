@@ -30,10 +30,15 @@ Launchkiln needed a waitlist where every referral reorders the line and each sig
 ### What Elements gave the app
 
 - **Live waitlist positions.** Signups are a LiveTable. Each referral reorders the line in the database, and only the signups whose place changed hear about it, so a status page shows its own position and referral count moving as friends join.
+
 - **A live signup count.** A channel carries the total, so the home page and every status page show the list growing as people join.
+
 - **Server calls as function calls.** Joining the waitlist is one `@rpc` call that returns the referral link, and an email already on the list gets its existing link back. The admin saves posts, pricing plans and FAQ entries the same way, with the cover image sent along in the same call.
+
 - **Covers and export.** Blog covers are stored in the database and served at addresses browsers keep for a year, and the admin downloads the waitlist as a CSV.
+
 - **Data from SQL files.** Migrations define the site, load three pricing plans and six FAQ entries everywhere, and seed the admin, four posts with drawn covers and 200 signups, about a third of them referred.
+
 - **Sessions and roles.** Every admin page, server call and the export share one guard on the admin role.
 
 ### What the project server gave the agent
