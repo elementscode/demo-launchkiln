@@ -10,9 +10,6 @@ A home page with pricing and FAQ, a blog, and a waitlist where referral links mo
 
 ## Agent specs
 
-What one run of the prompt below took, from an empty Elements project to this
-app.
-
 - **Agent:** Claude Code, Opus 5.5 Medium
 - **Time:** 23 min
 - **Cost:** $7.96 at API rates, September 2026
@@ -70,30 +67,7 @@ shows the admin login and fills it in for you.
 The admin, the posts and the signups load only in development. The plans and
 FAQ load in every environment.
 
-## The prompt
-
-```text
-Build a marketing site named launchkiln for a new invoicing product that is not
-launched yet.
-
-PUBLIC
-- Home: hero, three feature sections with screenshots, testimonials, pricing
-  with three plans, FAQ, footer.
-- Blog: an index and post pages.
-- Join the waitlist with an email. Each signup gets a referral link; every
-  friend who joins through it moves them up the list. A page shows their
-  position and referrals.
-
-ADMIN
-- Write blog posts in markdown with a cover image, draft or published.
-- Waitlist: signups, referral counts, export as CSV.
-- Edit the pricing plans and FAQ.
-
-Seed the admin, four blog posts with covers, and 200 waitlist signups with
-referrals. Show the admin login on the sign-in page.
-
-Waitlist positions update in real time.
-```
+**Demo:** [Launchkiln](https://elements.dev/demos/01a0f417-e8ad-7900-b01b-5aee50c6ca2f)
 
 ## License
 
