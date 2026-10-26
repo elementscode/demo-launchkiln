@@ -1,30 +1,16 @@
-![Launchkiln, a prelaunch marketing site built with Elements: the home page hero with an invoice stamped paid, a payment notification and the waitlist form.](https://elements.dev/demos/01a0f417-e8ad-7900-b01b-5aee50c6ca2f/poster?v=cc1da6193af1)
+![A marketing site with a referral waitlist, built by Claude Code on Elements: the home page hero with an invoice stamped paid, a payment notification and the waitlist form.](https://elements.dev/demos/01a0f417-e8ad-7900-b01b-5aee50c6ca2f/poster?v=cc1da6193af1)
 
-# Launchkiln
+# A marketing site with a referral waitlist, built by Claude Code on Elements
 
-> A demo app built with [Elements](https://elements.dev).
+> Launchkiln is a full-stack app built with Claude Code on Elements.
 
 A home page with pricing and FAQ, a blog, and a waitlist where referral links move people up the list live, plus an admin for posts, plans and CSV export.
 
-**Demo:** [Launchkiln](https://elements.dev/demos/01a0f417-e8ad-7900-b01b-5aee50c6ca2f)
-
-## Agent specs
-
-- **Agent:** Claude Code, Opus 5.5 Medium
-- **Time:** 23 min
-- **Cost:** $7.96 at API rates, September 2026
-
-## Get started
-
-```bash
-elements create launchkiln -scaffold=elementscode/demo-launchkiln
-```
+[Run this app on your machine](https://elements.dev/demos/01a0f417-e8ad-7900-b01b-5aee50c6ca2f). Use this demo as inspiration, or as the starting point for your own app. Your agent creates a new app with this one as the scaffold, and you prompt it to add whatever features you want.
 
 ## How it's built
 
 Launchkiln needed a waitlist where every referral reorders the line and each signup watches their own place move, a blog with cover images, and admin pages for posts, pricing and the FAQ. Each of those is a part of Elements, so the agent spent its 23 minutes on the launch site itself.
-
-### What Elements gave the app
 
 - **Live waitlist positions.** Signups are a LiveTable. Each referral reorders the line in the database, and only the signups whose place changed hear about it, so a status page shows its own position and referral count moving as friends join.
 
@@ -38,37 +24,6 @@ Launchkiln needed a waitlist where every referral reorders the line and each sig
 
 - **Sessions and roles.** Every admin page, server call and the export share one guard on the admin role.
 
-### What the project server gave the agent
+## Why Elements
 
-The project server runs alongside the agent and answers as soon as a file is saved: it type-checks the templates, TypeScript and SQL, applies migrations and reruns the tests, so every question came back right away and the agent kept building.
-
-### What shipped
-
-The app type-checks with zero errors and all 52 tests pass. Every page works on desktop and phone.
-
-## Seed data and demo account
-
-The seed creates one admin, four published blog posts with drawn SVG covers,
-three pricing plans, six FAQ entries, and 200 waitlist signups from the past
-five weeks, about a third of them referred by another signup. The sign-in page
-shows the admin login and fills it in for you.
-
-| Email                  | Password     | Role  |
-| ---------------------- | ------------ | ----- |
-| admin@launchkiln.test  | `launchkiln` | admin |
-
-- `/` is the home page. Joining the waitlist takes you to `/waitlist/<code>`,
-  your place in line and your referral link. The page updates live as the
-  list moves.
-- `/blog` lists the posts.
-- `/admin` is the admin: waitlist (with CSV export), blog posts, pricing and
-  FAQ.
-
-The admin, the posts, the signups, the plans and the FAQ load in every
-environment.
-
-**Demo:** [Launchkiln](https://elements.dev/demos/01a0f417-e8ad-7900-b01b-5aee50c6ca2f)
-
-## License
-
-MIT. See [LICENSE](LICENSE).
+Elements is an integrated full-stack app framework and a project server. The project server checks the agent's work as it builds: it type-checks the server and browser code, analyzes the program, applies migrations and runs the tests, then reports the results to the agent. A security mistake, such as calling a server-only function from the browser, is a compile error. The agent reads the report and fixes its own mistakes before it tells you a feature is done. The same checks run on every feature you ask for next.
